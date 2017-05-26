@@ -1,0 +1,20 @@
+{
+  "name": "sparkle-tools",
+  "version": "0.1.0",
+  "description": "Tools for generating and maintaining Sparkle appcasts and projects",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brendan Molloy <brendan@bbqsrc.net> (https://brendan.so/)",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "js-yaml": "^3.8.4",
+    "moment": "^2.18.1",
+    "xmlbuilder": "^9.0.0"
+  },
+  "bin": {
+    "appcast": "./bin/appcast"
+  }
+}

@@ -1,0 +1,65 @@
+#!/usr/bin/env node
+
+const program = require("commander")
+const yaml = require("js-yaml")
+const fs = require("fs")
+
+const {
+  generateKeys,
+  generateAppcastItem,
+  generateAppcastStub,
+  convertObjectToAppcast
+} = require("../lib")
+
+program
+  .version("0.1.0")
+
+const keyMsg = `
+appcast_priv.pem: your private key. Keep it secret and don't share it!
+appcast_pub.pem: public counterpart to include in the app bundle.
+
+BACK UP YOUR PRIVATE KEY AND KEEP IT SAFE!
+If you lose it, your users will be unable to upgrade!
+`.trim()
+
+program
+  .command("gen-key [dest]")
+  .action((dest) => {
+    const target = dest || "."
+
+    if (fs.existsSync(`${target}/appcast_priv.pem`)) {
+      console.error("appcast_priv.pem already exists in target destination; aborting.")
+      process.exit(1)
+    }
+
+    generateKeys(target)
+
+    console.log()
+    console.log(keyMsg)
+  })
+
+program
+  .command("generate <appcast-yaml>")
+  .action((appcastYaml) => {
+    const data = yaml.safeLoad(fs.readFileSync(appcastYaml, "utf8"))
+
+    console.log(convertObjectToAppcast(data))
+  })
+
+program
+  .command("sign <priv-key> <target>")
+  .action((privKey, target) => {
+    console.log(generateAppcastItem(privKey, target))
+  })
+
+program
+  .command("init <title> <base-url> [lang]")
+  .action((title, url, lang) => {
+    console.log(generateAppcastStub(title, url, lang))
+  })
+
+program.parse(process.argv)
+
+if (process.argv.length < 3) {
+  program.outputHelp()
+}
